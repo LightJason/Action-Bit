@@ -59,6 +59,7 @@ import org.lightjason.agentspeak.action.bit.matrix.CToBlas;
 import org.lightjason.agentspeak.action.bit.matrix.CToVector;
 import org.lightjason.agentspeak.action.bit.matrix.CTrueCount;
 import org.lightjason.agentspeak.action.bit.matrix.CXor;
+import org.lightjason.agentspeak.error.context.CExecutionIllegealArgumentException;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
@@ -67,6 +68,7 @@ import org.lightjason.agentspeak.language.execution.IExecution;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -380,6 +382,19 @@ public final class TestCActionMathBitMatrix extends IBaseTest
         Assert.assertArrayEquals(
             Stream.of( 1, 0, 0, 1 ).toArray(),
             new CLambdaStreaming().apply( MATRIX1 ).toArray()
+        );
+    }
+
+    /**
+     * test hamming distance
+     */
+    @Test( expected = CExecutionIllegealArgumentException.class )
+    public void hammingdistanceerror()
+    {
+        new CHammingDistance().execute(
+            false, IContext.EMPTYPLAN,
+            Collections.emptyList(),
+            Collections.emptyList()
         );
     }
 

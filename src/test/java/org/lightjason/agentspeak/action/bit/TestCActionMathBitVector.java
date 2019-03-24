@@ -56,6 +56,7 @@ import org.lightjason.agentspeak.action.bit.vector.CToBlas;
 import org.lightjason.agentspeak.action.bit.vector.CToList;
 import org.lightjason.agentspeak.action.bit.vector.CTrueCount;
 import org.lightjason.agentspeak.action.bit.vector.CXor;
+import org.lightjason.agentspeak.error.context.CExecutionIllegealArgumentException;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
@@ -359,6 +360,19 @@ public final class TestCActionMathBitVector extends IBaseTest
         Assert.assertArrayEquals(
             Stream.of( 1, 0, 0 ).toArray(),
             new CLambdaStreaming().apply( VECTOR1 ).toArray()
+        );
+    }
+
+    /**
+     * test hamming distance
+     */
+    @Test( expected = CExecutionIllegealArgumentException.class )
+    public void hammingdistanceerror()
+    {
+        new CHammingDistance().execute(
+            false, IContext.EMPTYPLAN,
+            Collections.emptyList(),
+            Collections.emptyList()
         );
     }
 
