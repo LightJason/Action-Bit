@@ -62,6 +62,7 @@ import org.lightjason.agentspeak.action.bit.matrix.CXor;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
+import org.lightjason.agentspeak.language.execution.IExecution;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -96,15 +97,15 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     @Before
     public void initialize()
     {
+        MATRIX1.put( 0, 0, true );
+        MATRIX1.put( 1, 0, false );
         MATRIX1.put( 0, 1, false );
         MATRIX1.put( 1, 1, true );
-        MATRIX1.put( 1, 0, false );
-        MATRIX1.put( 0, 0, true );
 
+        MATRIX2.put( 0, 0, false );
+        MATRIX2.put( 1, 0, true );
         MATRIX2.put( 0, 1, true );
         MATRIX2.put( 1, 1, true );
-        MATRIX2.put( 1, 0, true );
-        MATRIX2.put( 0, 0, false );
     }
 
     /**
@@ -339,21 +340,26 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     public void toblas()
     {
         final List<ITerm> l_return = new ArrayList<>();
-        final Double[][] l_result = {{0.0, 1.0}, {1.0, 1.0}};
+        final IExecution l_toblas = new CToBlas();
 
-        new CToBlas().execute(
+        l_toblas.execute(
+            false, IContext.EMPTYPLAN,
+            Stream.of( MATRIX1, "dense" ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            l_return
+        );
+
+        l_toblas.execute(
             false, IContext.EMPTYPLAN,
             Stream.of( MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
-        Assert.assertEquals( l_return.size(), 1 );
+        Assert.assertEquals( 2, l_return.size() );
         Assert.assertTrue( l_return.get( 0 ).raw() instanceof DoubleMatrix2D );
+        Assert.assertTrue( l_return.get( 1 ).raw() instanceof DoubleMatrix2D );
 
-        final DoubleMatrix2D l_blas = l_return.get( 0 ).raw();
-
-        Assert.assertEquals( 4, l_blas.size() );
-        Assert.assertArrayEquals( l_result, l_blas.toArray() );
+        Assert.assertArrayEquals( new double[][]{{1.0, 0.0}, {0.0, 1.0}}, l_return.get( 0 ).<DoubleMatrix2D>raw().toArray() );
+        Assert.assertArrayEquals( new double[][]{{0.0, 1.0}, {1.0, 1.0}}, l_return.get( 1 ).<DoubleMatrix2D>raw().toArray() );
     }
 
     /**

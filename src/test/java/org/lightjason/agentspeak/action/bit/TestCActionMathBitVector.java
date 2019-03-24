@@ -59,6 +59,7 @@ import org.lightjason.agentspeak.action.bit.vector.CXor;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
 import org.lightjason.agentspeak.language.execution.IContext;
+import org.lightjason.agentspeak.language.execution.IExecution;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -318,16 +319,26 @@ public final class TestCActionMathBitVector extends IBaseTest
     public void toblas()
     {
         final List<ITerm> l_return = new ArrayList<>();
+        final IExecution l_toblas = new CToBlas();
 
-        new CToBlas().execute(
+        l_toblas.execute(
+            false, IContext.EMPTYPLAN,
+            Stream.of( VECTOR1, "dense" ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            l_return
+        );
+
+        l_toblas.execute(
             false, IContext.EMPTYPLAN,
             Stream.of( VECTOR2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
-        Assert.assertEquals( l_return.size(), 1 );
+        Assert.assertEquals( 2, l_return.size() );
         Assert.assertTrue( l_return.get( 0 ).raw() instanceof DoubleMatrix1D );
-        Assert.assertArrayEquals( Stream.of( 0, 0, 1 ).mapToDouble( i -> i ).toArray(), l_return.get( 0 ).<DoubleMatrix1D>raw().toArray(), 0 );
+        Assert.assertTrue( l_return.get( 1 ).raw() instanceof DoubleMatrix1D );
+
+        Assert.assertArrayEquals( Stream.of( 1, 0, 0 ).mapToDouble( i -> i ).toArray(), l_return.get( 0 ).<DoubleMatrix1D>raw().toArray(), 0 );
+        Assert.assertArrayEquals( Stream.of( 0, 0, 1 ).mapToDouble( i -> i ).toArray(), l_return.get( 1 ).<DoubleMatrix1D>raw().toArray(), 0 );
     }
 
     /**
