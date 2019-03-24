@@ -234,7 +234,9 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void set()
     {
-        new CSet().execute(
+        final IExecution l_set = new CSet();
+
+        l_set.execute(
             false, IContext.EMPTYPLAN,
             Stream.of( VECTOR2, true, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             Collections.emptyList()
@@ -242,6 +244,15 @@ public final class TestCActionMathBitVector extends IBaseTest
 
         Assert.assertTrue( VECTOR2.get( 0 ) );
         Assert.assertTrue( VECTOR2.get( 1 ) );
+
+        l_set.execute(
+            false, IContext.EMPTYPLAN,
+            Stream.of( VECTOR2, 0.5, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Collections.emptyList()
+        );
+
+        Assert.assertFalse( VECTOR2.get( 0 ) );
+        Assert.assertFalse( VECTOR2.get( 1 ) );
     }
 
     /**
@@ -292,6 +303,19 @@ public final class TestCActionMathBitVector extends IBaseTest
         );
 
         Assert.assertEquals( 0D, l_return.get( 0 ).<Number>raw() );
+    }
+
+    /**
+     * test numericvalue error
+     */
+    @Test( expected = CExecutionIllegealArgumentException.class )
+    public void numericvalueerror()
+    {
+        new CNumericValue().execute(
+            false, IContext.EMPTYPLAN,
+            Collections.emptyList(),
+            Collections.emptyList()
+        );
     }
 
     /**

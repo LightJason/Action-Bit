@@ -59,6 +59,7 @@ import org.lightjason.agentspeak.action.bit.matrix.CToBlas;
 import org.lightjason.agentspeak.action.bit.matrix.CToVector;
 import org.lightjason.agentspeak.action.bit.matrix.CTrueCount;
 import org.lightjason.agentspeak.action.bit.matrix.CXor;
+import org.lightjason.agentspeak.action.bit.matrix.CSet;
 import org.lightjason.agentspeak.error.context.CExecutionIllegealArgumentException;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
@@ -319,6 +320,19 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     }
 
     /**
+     * test numeric value error
+     */
+    @Test( expected = CExecutionIllegealArgumentException.class )
+    public void numericvalueerror()
+    {
+        new CNumericValue().execute(
+            false, IContext.EMPTYPLAN,
+            Collections.emptyList(),
+            Collections.emptyList()
+        );
+    }
+
+    /**
      * test boolean value
      */
     @Test
@@ -396,6 +410,33 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             Collections.emptyList(),
             Collections.emptyList()
         );
+    }
+
+    /**
+     * test set
+     */
+    @Test
+    public void set()
+    {
+        final IExecution l_set = new CSet();
+
+        l_set.execute(
+            false, IContext.EMPTYPLAN,
+            Stream.of( MATRIX2, true, 0, 1, 0, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Collections.emptyList()
+        );
+
+        Assert.assertTrue( MATRIX2.get( 0, 0 ) );
+        Assert.assertTrue( MATRIX2.get( 0, 1 ) );
+
+        l_set.execute(
+            false, IContext.EMPTYPLAN,
+            Stream.of( MATRIX2, 0.5, 0, 0, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Collections.emptyList()
+        );
+
+        Assert.assertFalse( MATRIX2.get( 0, 0 ) );
+        Assert.assertFalse( MATRIX2.get( 0, 1 ) );
     }
 
 }

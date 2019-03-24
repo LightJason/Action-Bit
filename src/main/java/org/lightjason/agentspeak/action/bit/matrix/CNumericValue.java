@@ -71,7 +71,7 @@ public final class CNumericValue extends IBaseAction
     @Override
     public int minimalArgumentNumber()
     {
-        return 2;
+        return 1;
     }
 
     @Nonnull
