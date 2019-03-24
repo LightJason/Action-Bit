@@ -47,6 +47,7 @@ import org.lightjason.agentspeak.action.bit.matrix.CCreate;
 import org.lightjason.agentspeak.action.bit.matrix.CDimension;
 import org.lightjason.agentspeak.action.bit.matrix.CFalseCount;
 import org.lightjason.agentspeak.action.bit.matrix.CHammingDistance;
+import org.lightjason.agentspeak.action.bit.matrix.CLambdaStreaming;
 import org.lightjason.agentspeak.action.bit.matrix.CNAnd;
 import org.lightjason.agentspeak.action.bit.matrix.CNot;
 import org.lightjason.agentspeak.action.bit.matrix.CNumericValue;
@@ -96,13 +97,13 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     public void initialize()
     {
         MATRIX1.put( 0, 1, false );
-        MATRIX1.put( 1, 0, false );
         MATRIX1.put( 1, 1, true );
+        MATRIX1.put( 1, 0, false );
         MATRIX1.put( 0, 0, true );
 
         MATRIX2.put( 0, 1, true );
-        MATRIX2.put( 1, 0, true );
         MATRIX2.put( 1, 1, true );
+        MATRIX2.put( 1, 0, true );
         MATRIX2.put( 0, 0, false );
     }
 
@@ -353,6 +354,27 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         Assert.assertEquals( 4, l_blas.size() );
         Assert.assertArrayEquals( l_result, l_blas.toArray() );
+    }
+
+    /**
+     * test lambda streaming assignable
+     */
+    @Test
+    public void lambdaassignable()
+    {
+        Assert.assertTrue( new CLambdaStreaming().assignable().collect( Collectors.toSet() ).contains( BitMatrix.class ) );
+    }
+
+    /**
+     * test lambda streaming
+     */
+    @Test
+    public void lambda()
+    {
+        Assert.assertArrayEquals(
+            Stream.of( 1, 0, 0, 1 ).toArray(),
+            new CLambdaStreaming().apply( MATRIX1 ).toArray()
+        );
     }
 
 }

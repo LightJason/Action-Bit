@@ -44,6 +44,7 @@ import org.lightjason.agentspeak.action.bit.vector.CCopy;
 import org.lightjason.agentspeak.action.bit.vector.CCreate;
 import org.lightjason.agentspeak.action.bit.vector.CFalseCount;
 import org.lightjason.agentspeak.action.bit.vector.CHammingDistance;
+import org.lightjason.agentspeak.action.bit.vector.CLambdaStreaming;
 import org.lightjason.agentspeak.action.bit.vector.CNAnd;
 import org.lightjason.agentspeak.action.bit.vector.CNot;
 import org.lightjason.agentspeak.action.bit.vector.CNumericValue;
@@ -327,6 +328,27 @@ public final class TestCActionMathBitVector extends IBaseTest
         Assert.assertEquals( l_return.size(), 1 );
         Assert.assertTrue( l_return.get( 0 ).raw() instanceof DoubleMatrix1D );
         Assert.assertArrayEquals( Stream.of( 0, 0, 1 ).mapToDouble( i -> i ).toArray(), l_return.get( 0 ).<DoubleMatrix1D>raw().toArray(), 0 );
+    }
+
+    /**
+     * test lambda streaming assignable
+     */
+    @Test
+    public void lambdaassignable()
+    {
+        Assert.assertTrue( new CLambdaStreaming().assignable().collect( Collectors.toSet() ).contains( BitVector.class ) );
+    }
+
+    /**
+     * test lambda streaming
+     */
+    @Test
+    public void lambda()
+    {
+        Assert.assertArrayEquals(
+            Stream.of( 1, 0, 0 ).toArray(),
+            new CLambdaStreaming().apply( VECTOR1 ).toArray()
+        );
     }
 
 }
