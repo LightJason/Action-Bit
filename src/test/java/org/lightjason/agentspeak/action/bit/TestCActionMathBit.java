@@ -23,51 +23,35 @@
 
 package org.lightjason.agentspeak.action.bit;
 
-
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.junit.Assert;
+import org.junit.Test;
 
 
 /**
- * blas types
+ * test bit generic calls
  */
-public enum EBlasType
+public final class TestCActionMathBit
 {
-    SPARSE,
-    DENSE;
 
     /**
-     * set with names
-     *
-     * @warning name method cannot replaced by a static call
+     * test blas type string call
      */
-    private static final Set<String> NAMES = Collections.unmodifiableSet( Arrays.stream( EBlasType.values() ).map( i -> i.name() ).collect( Collectors.toSet() ) );
-
-    /**
-     * additional factory
-     *
-     * @param p_name name as string
-     * @return enum
-     */
-    public static EBlasType of( @Nonnull final String p_name )
+    @Test
+    public void blastype()
     {
-        return EBlasType.valueOf( p_name.trim().toUpperCase( Locale.ROOT ) );
+        Assert.assertEquals( EBlasType.DENSE, EBlasType.of( "dense" ) );
+        Assert.assertEquals( EBlasType.SPARSE, EBlasType.of( "sparse" ) );
     }
 
     /**
-     * check method to check if a enum value with a name exists
-     *
-     * @param p_name name as string
-     * @return boolean if enum value exists
+     * test blas type exists
      */
-    public static boolean exists( @Nonnull final String p_name )
+    @Test
+    public void blastypeexists()
     {
-        return NAMES.contains( p_name.trim().toUpperCase( Locale.ROOT ) );
+        Assert.assertFalse( EBlasType.exists( "xxx" ) );
+        Assert.assertTrue( EBlasType.exists( "sparse" ) );
+        Assert.assertTrue( EBlasType.exists( "dense" ) );
     }
 
 }
-

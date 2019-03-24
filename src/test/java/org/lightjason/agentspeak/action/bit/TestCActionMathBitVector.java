@@ -289,6 +289,19 @@ public final class TestCActionMathBitVector extends IBaseTest
     }
 
     /**
+     * test range error
+     */
+    @Test( expected = CExecutionIllegealArgumentException.class )
+    public void rangeerror()
+    {
+        new CRange().execute(
+            false, IContext.EMPTYPLAN,
+            Collections.emptyList(),
+            Collections.emptyList()
+        );
+    }
+
+    /**
      * test numericvalue
      */
     @Test
