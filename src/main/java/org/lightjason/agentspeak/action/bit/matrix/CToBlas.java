@@ -30,7 +30,6 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.action.bit.EBlasType;
 import org.lightjason.agentspeak.common.IPath;
-import org.lightjason.agentspeak.error.context.CExecutionIllegealArgumentException;
 import org.lightjason.agentspeak.language.CCommon;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
@@ -85,40 +84,24 @@ public final class CToBlas extends IBaseAction
     )
     {
         final List<ITerm> l_arguments = CCommon.flatten( p_argument ).collect( Collectors.toList() );
-        final EBlasType l_type = l_arguments.parallelStream()
-                                            .filter( i -> CCommon.isssignableto( i, String.class ) )
-                                            .findFirst().map( i -> EBlasType.of( i.<String>raw() ) )
-                                            .orElse( EBlasType.SPARSE );
+        if ( EBlasType.DENSE == l_arguments.parallelStream().filter( i -> CCommon.isssignableto( i, String.class ) )
+                                            .findFirst().map( i -> EBlasType.of( i.<String>raw() ) ).orElse( EBlasType.SPARSE ) )
+            l_arguments.stream()
+                       .filter( i -> CCommon.isssignableto( i, BitMatrix.class ) )
+                       .map( ITerm::<BitMatrix>raw )
+                       .map( i -> CToBlas.tomatrix( i, new DenseDoubleMatrix2D( i.rows(), i.columns() ) ) )
+                       .map( CRawTerm::of )
+                       .forEach( p_return::add );
 
-        switch ( l_type )
-        {
-            case DENSE:
-                l_arguments.stream()
-                           .filter( i -> CCommon.isssignableto( i, BitMatrix.class ) )
-                           .map( ITerm::<BitMatrix>raw )
-                           .map( i -> CToBlas.tomatrix( i, new DenseDoubleMatrix2D( i.rows(), i.columns() ) ) )
-                           .map( CRawTerm::of )
-                           .forEach( p_return::add );
+        else
+            l_arguments.stream()
+                       .filter( i -> CCommon.isssignableto( i, BitMatrix.class ) )
+                       .map( ITerm::<BitMatrix>raw )
+                       .map( i -> CToBlas.tomatrix( i, new SparseDoubleMatrix2D( i.rows(), i.columns() ) ) )
+                       .map( CRawTerm::of )
+                       .forEach( p_return::add );
 
-                return Stream.of();
-
-
-            case SPARSE:
-                l_arguments.stream()
-                           .filter( i -> CCommon.isssignableto( i, BitMatrix.class ) )
-                           .map( ITerm::<BitMatrix>raw )
-                           .map( i -> CToBlas.tomatrix( i, new SparseDoubleMatrix2D( i.rows(), i.columns() ) ) )
-                           .map( CRawTerm::of )
-                           .forEach( p_return::add );
-
-                return Stream.of();
-
-            default:
-                throw new CExecutionIllegealArgumentException(
-                    p_context,
-                    org.lightjason.agentspeak.common.CCommon.languagestring( this, "unknownargument", l_type )
-                );
-        }
+        return Stream.of();
     }
 
 

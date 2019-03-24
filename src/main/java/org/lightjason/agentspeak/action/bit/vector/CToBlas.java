@@ -29,7 +29,6 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import org.lightjason.agentspeak.action.IBaseAction;
 import org.lightjason.agentspeak.action.bit.EBlasType;
 import org.lightjason.agentspeak.common.IPath;
-import org.lightjason.agentspeak.error.context.CExecutionIllegealArgumentException;
 import org.lightjason.agentspeak.language.CCommon;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
@@ -81,45 +80,29 @@ public final class CToBlas extends IBaseAction
     @Nonnull
     @Override
     public Stream<IFuzzyValue<?>> execute( final boolean p_parallel, @Nonnull final IContext p_context,
-                                           @Nonnull final List<ITerm> p_argument, @Nonnull final List<ITerm> p_return
-    )
+                                           @Nonnull final List<ITerm> p_argument, @Nonnull final List<ITerm> p_return )
     {
         final List<ITerm> l_arguments = CCommon.flatten( p_argument ).collect( Collectors.toList() );
-        final EBlasType l_type = l_arguments.parallelStream()
-                                            .filter( i -> CCommon.isssignableto( i, String.class ) )
-                                            .findFirst().map( i -> EBlasType.of( i.<String>raw() ) )
-                                            .orElse( EBlasType.SPARSE );
 
-        switch ( l_type )
-        {
-            case DENSE:
-                l_arguments.stream()
-                           .filter( i -> CCommon.isssignableto( i, BitVector.class ) )
-                           .map( ITerm::<BitVector>raw )
-                           .map( i -> IntStream.range( 0, i.size() ).boxed().mapToDouble( j -> i.getQuick( j ) ? 1 : 0 ).toArray() )
-                           .map( DenseDoubleMatrix1D::new )
-                           .map( CRawTerm::of )
-                           .forEach( p_return::add );
+        if  ( EBlasType.DENSE == l_arguments.parallelStream().filter( i -> CCommon.isssignableto( i, String.class ) )
+                                            .findFirst().map( i -> EBlasType.of( i.<String>raw() ) ).orElse( EBlasType.SPARSE ) )
+            l_arguments.stream()
+                       .filter( i -> CCommon.isssignableto( i, BitVector.class ) )
+                       .map( ITerm::<BitVector>raw )
+                       .map( i -> IntStream.range( 0, i.size() ).boxed().mapToDouble( j -> i.getQuick( j ) ? 1 : 0 ).toArray() )
+                       .map( DenseDoubleMatrix1D::new )
+                       .map( CRawTerm::of )
+                       .forEach( p_return::add );
 
-                return Stream.of();
+        else
+            l_arguments.stream()
+                       .filter( i -> CCommon.isssignableto( i, BitVector.class ) )
+                       .map( ITerm::<BitVector>raw )
+                       .map( i -> IntStream.range( 0, i.size() ).boxed().mapToDouble( j -> i.getQuick( j ) ? 1 : 0 ).toArray() )
+                       .map( SparseDoubleMatrix1D::new )
+                       .map( CRawTerm::of )
+                       .forEach( p_return::add );
 
-
-            case SPARSE:
-                l_arguments.stream()
-                           .filter( i -> CCommon.isssignableto( i, BitVector.class ) )
-                           .map( ITerm::<BitVector>raw )
-                           .map( i -> IntStream.range( 0, i.size() ).boxed().mapToDouble( j -> i.getQuick( j ) ? 1 : 0 ).toArray() )
-                           .map( SparseDoubleMatrix1D::new )
-                           .map( CRawTerm::of )
-                           .forEach( p_return::add );
-
-                return Stream.of();
-
-            default:
-                throw new CExecutionIllegealArgumentException(
-                    p_context,
-                    org.lightjason.agentspeak.common.CCommon.languagestring( this, "unknownargument", l_type )
-                );
-        }
+        return Stream.of();
     }
 }
