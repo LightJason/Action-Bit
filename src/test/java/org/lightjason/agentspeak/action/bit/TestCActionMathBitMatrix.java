@@ -349,6 +349,19 @@ public final class TestCActionMathBitMatrix extends IBaseTest
         Assert.assertEquals( false, l_return.get( 0 ).<Boolean>raw() );
     }
 
+    /**
+     * test boolean value error
+     */
+    @Test( expected = CExecutionIllegealArgumentException.class )
+    public void boolValueError()
+    {
+        new CBoolValue().execute(
+            false, IContext.EMPTYPLAN,
+            Stream.of( MATRIX2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Collections.emptyList()
+        );
+    }
+
      /**
      * test toblas
      */
