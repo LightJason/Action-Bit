@@ -25,12 +25,13 @@ package org.lightjason.agentspeak.action.bit;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.lightjason.agentspeak.testing.IBaseTest;
 
 
 /**
  * test bit generic calls
  */
-public final class TestCActionMathBit
+public final class TestCActionMathBit extends IBaseTest
 {
 
     /**
