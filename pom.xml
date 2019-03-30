@@ -31,7 +31,7 @@
     <!-- project meta information -->
     <name>LightJason AgentSpeak(L++) - Bit Action</name>
     <description>AgentSpeak(L++) action for bit structure</description>
-    <url>https://github.com/LightJason/AgentSpeak</url>
+    <url>https://github.com/LightJason/Java-Action-Bit</url>
     
     <organization>
         <name>LightJason</name>
@@ -47,13 +47,13 @@
     
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/LightJason/Action-Bit/issues</url>
+        <url>https://github.com/LightJason/Java-Action-Bit/issues</url>
     </issueManagement>
     
     <scm>
-        <url>https://github.com/LightJason/Action-Bit</url>
-        <connection>scm:git:git://github.com:LightJason/Action-Bit.git</connection>
-        <developerConnection>scm:git:git@github.com:LightJason/Action-Bit.git</developerConnection>
+        <url>https://github.com/LightJason/Java-Action-Bit</url>
+        <connection>scm:git:git://github.com:LightJason/Java-Action-Bit.git</connection>
+        <developerConnection>scm:git:git@github.com:LightJason/Java-Action-Bit.git</developerConnection>
         <tag>v0.0.1</tag>
     </scm>
     
