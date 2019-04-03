@@ -126,11 +126,6 @@
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>net.sourceforge.parallelcolt</groupId>
-            <artifactId>parallelcolt</artifactId>
-            <version>0.10.1</version>
-        </dependency>
         
         <!-- checking -->
         <dependency>
