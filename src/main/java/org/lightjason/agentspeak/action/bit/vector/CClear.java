@@ -90,6 +90,6 @@ public final class CClear extends IBaseAction
                    .map( ITerm::<BitVector>raw )
                    .forEach( i -> Arrays.stream( l_index ).forEach( i::clear ) );
 
-        return Stream.of();
+        return Stream.empty();
     }
 }

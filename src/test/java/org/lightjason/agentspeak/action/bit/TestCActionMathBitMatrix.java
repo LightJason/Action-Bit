@@ -144,11 +144,11 @@ public final class TestCActionMathBitMatrix extends IBaseTest
                 Stream.of( 2D, 3D ),
                 Stream.of( 4, 4 ),
                 Stream.of( 2D, 2D ),
-                Stream.of(),
-                Stream.of(),
-                Stream.of(),
-                Stream.of(),
-                Stream.of(),
+                Stream.empty(),
+                Stream.empty(),
+                Stream.empty(),
+                Stream.empty(),
+                Stream.empty(),
                 Stream.of( 3D )
 
         ).toArray();

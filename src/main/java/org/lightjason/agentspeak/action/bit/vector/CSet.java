@@ -90,6 +90,6 @@ public final class CSet extends IBaseAction
                    .boxed()
                    .forEach( i -> l_arguments.get( 0 ).<BitVector>raw().put( i, l_value ) );
 
-        return Stream.of();
+        return Stream.empty();
     }
 }

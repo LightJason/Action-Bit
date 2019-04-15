@@ -69,7 +69,7 @@ public abstract class IBaseOperator extends IBaseAction
                    .parallel()
                    .forEach( i -> this.apply( i, l_arguments.get( 0 ) ) );
 
-        return Stream.of();
+        return Stream.empty();
     }
 
 

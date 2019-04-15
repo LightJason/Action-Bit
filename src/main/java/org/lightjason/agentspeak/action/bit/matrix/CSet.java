@@ -91,6 +91,6 @@ public final class CSet extends IBaseAction
                    2
         ).forEach( i -> l_arguments.get( 0 ).<BitMatrix>raw().put( i.get( 0 ).<Number>raw().intValue(), i.get( 1 ).<Number>raw().intValue(), l_value ) );
 
-        return Stream.of();
+        return Stream.empty();
     }
 }

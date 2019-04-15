@@ -131,12 +131,12 @@ public final class TestCActionMathBitVector extends IBaseTest
                 Stream.of( VECTOR1, VECTOR2 ),
                 Stream.of( 1D, 1D ),
                 Stream.of( 3, 3 ),
-                Stream.of(),
-                Stream.of(),
-                Stream.of(),
-                Stream.of(),
+                Stream.empty(),
+                Stream.empty(),
+                Stream.empty(),
+                Stream.empty(),
                 Stream.of( 2D ),
-                Stream.of()
+                Stream.empty()
 
         ).toArray();
     }

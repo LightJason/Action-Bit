@@ -80,6 +80,6 @@ public final class CNot extends IBaseAction
                .map( ITerm::<BitVector>raw )
                .forEach( BitVector::not );
 
-        return Stream.of();
+        return Stream.empty();
     }
 }
