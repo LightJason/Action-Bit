@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  *
  * {@code [A|B] = .math/bit/matrix/hammingdistance( Matrix1, Matrix2, Matrix3 );}
  *
- * @see https://en.wikipedia.org/wiki/Hamming_distance
+ * @see <a href="https://en.wikipedia.org/wiki/Hamming_distance"></a>
  */
 public final class CHammingDistance extends IBaseAction
 {
