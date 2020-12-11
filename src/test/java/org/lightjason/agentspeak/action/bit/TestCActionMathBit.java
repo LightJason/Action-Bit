@@ -23,8 +23,8 @@
 
 package org.lightjason.agentspeak.action.bit;
 
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.lightjason.agentspeak.testing.IBaseTest;
 
 
@@ -40,8 +40,8 @@ public final class TestCActionMathBit extends IBaseTest
     @Test
     public void blastype()
     {
-        Assert.assertEquals( EBlasType.DENSE, EBlasType.of( "dense" ) );
-        Assert.assertEquals( EBlasType.SPARSE, EBlasType.of( "sparse" ) );
+        Assertions.assertEquals( EBlasType.DENSE, EBlasType.of( "dense" ) );
+        Assertions.assertEquals( EBlasType.SPARSE, EBlasType.of( "sparse" ) );
     }
 
     /**
@@ -50,9 +50,9 @@ public final class TestCActionMathBit extends IBaseTest
     @Test
     public void blastypeexists()
     {
-        Assert.assertFalse( EBlasType.exists( "xxx" ) );
-        Assert.assertTrue( EBlasType.exists( "sparse" ) );
-        Assert.assertTrue( EBlasType.exists( "dense" ) );
+        Assertions.assertFalse( EBlasType.exists( "xxx" ) );
+        Assertions.assertTrue( EBlasType.exists( "sparse" ) );
+        Assertions.assertTrue( EBlasType.exists( "dense" ) );
     }
 
 }

@@ -27,8 +27,9 @@ import cern.colt.matrix.tbit.BitMatrix;
 import cern.colt.matrix.tbit.BitVector;
 import cern.colt.matrix.tdouble.DoubleMatrix2D;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -73,58 +74,59 @@ import java.util.stream.Stream;
 /**
  * test math bit matrix functions
  */
+@TestInstance( TestInstance.Lifecycle.PER_CLASS )
 public final class TestCActionMathBitMatrix extends IBaseTest
 {
     /**
      * testing matrix
-     * @note static because of usage in data-provider and test-initialize
      */
-    private static final BitMatrix MATRIX1 = new BitMatrix( 2, 2 );
+    private final BitMatrix m_matrix1 = new BitMatrix( 2, 2 );
     /**
      * testing matrix
-     * @note static because of usage in data-provider and test-initialize
      */
-    private static final BitMatrix MATRIX2 = new BitMatrix( 2, 2 );
+    private final BitMatrix m_matrix2 = new BitMatrix( 2, 2 );
 
 
     /**
      * initialize
      */
-    @BeforeAll
-    public static void initialize()
+    @BeforeEach
+    public void initialize()
     {
-        MATRIX1.put( 0, 0, true );
-        MATRIX1.put( 1, 0, false );
-        MATRIX1.put( 0, 1, false );
-        MATRIX1.put( 1, 1, true );
+        m_matrix1.put( 0, 0, true );
+        m_matrix1.put( 1, 0, false );
+        m_matrix1.put( 0, 1, false );
+        m_matrix1.put( 1, 1, true );
 
-        MATRIX2.put( 0, 0, false );
-        MATRIX2.put( 1, 0, true );
-        MATRIX2.put( 0, 1, true );
-        MATRIX2.put( 1, 1, true );
+        m_matrix2.put( 0, 0, false );
+        m_matrix2.put( 1, 0, true );
+        m_matrix2.put( 0, 1, true );
+        m_matrix2.put( 1, 1, true );
     }
 
     /**
      * data provider generator
      * @return data
      */
-    public static Stream<Arguments> generator()
+    public Stream<Arguments> generator()
     {
         return Stream.of(
 
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CColumns.class, Stream.of( 2D, 2D ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CFalseCount.class, Stream.of( 2D, 1D ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CDimension.class, Stream.of( 2D, 2D, 2D, 2D ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CCopy.class, Stream.of( MATRIX1, MATRIX2 ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CTrueCount.class, Stream.of( 2D, 3D ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CSize.class, Stream.of( 4, 4 ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CRows.class, Stream.of( 2D, 2D ) ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNot.class, Stream.empty() ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), COr.class, Stream.empty() ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CAnd.class, Stream.empty() ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CXor.class, Stream.empty() ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNAnd.class, Stream.empty() ),
-                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CHammingDistance.class, Stream.of( 3D ) )
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CColumns.class, Stream.of( 2D, 2D ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CFalseCount.class, Stream.of( 2D, 1D ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CDimension.class, Stream.of( 2D, 2D, 2D, 2D ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CCopy.class, Stream.of( m_matrix1,
+                                                                                                                                            m_matrix2
+                ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CTrueCount.class, Stream.of( 2D, 3D ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CSize.class, Stream.of( 4, 4 ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CRows.class, Stream.of( 2D, 2D ) ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNot.class, Stream.empty() ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), COr.class, Stream.empty() ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CAnd.class, Stream.empty() ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CXor.class, Stream.empty() ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNAnd.class, Stream.empty() ),
+                Arguments.of( Stream.of( m_matrix1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CHammingDistance.class, Stream.of( 3D ) )
 
         );
     }
@@ -192,7 +194,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         new CToVector().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -218,7 +220,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         new CColumn().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( 1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( 1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -242,7 +244,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         new CRow().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( 1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( 1, m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -266,7 +268,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         new CNumericValue().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX1, 1, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix1, 1, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -299,7 +301,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         new CBoolValue().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX2, 0, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix2, 0, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -316,7 +318,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             CExecutionIllegealArgumentException.class,
             () -> new CBoolValue().execute(
                 false, IContext.EMPTYPLAN,
-                Stream.of( MATRIX2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+                Stream.of( m_matrix2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
                 Collections.emptyList()
             )
         );
@@ -333,13 +335,13 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         l_toblas.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX1, "dense" ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix1, "dense" ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
         l_toblas.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -368,7 +370,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     {
         Assertions.assertArrayEquals(
             Stream.of( 1, 0, 0, 1 ).toArray(),
-            new CLambdaStreaming().apply( MATRIX1 ).toArray()
+            new CLambdaStreaming().apply( m_matrix1 ).toArray()
         );
     }
 
@@ -398,21 +400,21 @@ public final class TestCActionMathBitMatrix extends IBaseTest
 
         l_set.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX2, true, 0, 1, 0, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix2, true, 0, 1, 0, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             Collections.emptyList()
         );
 
-        Assertions.assertTrue( MATRIX2.get( 0, 0 ) );
-        Assertions.assertTrue( MATRIX2.get( 0, 1 ) );
+        Assertions.assertTrue( m_matrix2.get( 0, 0 ) );
+        Assertions.assertTrue( m_matrix2.get( 0, 1 ) );
 
         l_set.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX2, 0.5, 0, 0, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( m_matrix2, 0.5, 0, 0, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             Collections.emptyList()
         );
 
-        Assertions.assertFalse( MATRIX2.get( 0, 0 ) );
-        Assertions.assertFalse( MATRIX2.get( 0, 1 ) );
+        Assertions.assertFalse( m_matrix2.get( 0, 0 ) );
+        Assertions.assertFalse( m_matrix2.get( 0, 1 ) );
     }
 
 }
