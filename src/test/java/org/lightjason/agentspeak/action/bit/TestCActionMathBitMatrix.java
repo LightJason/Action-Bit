@@ -26,16 +26,12 @@ package org.lightjason.agentspeak.action.bit;
 import cern.colt.matrix.tbit.BitMatrix;
 import cern.colt.matrix.tbit.BitVector;
 import cern.colt.matrix.tdouble.DoubleMatrix2D;
-import com.codepoetics.protonpack.StreamUtils;
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.lightjason.agentspeak.action.IAction;
 import org.lightjason.agentspeak.action.bit.matrix.CAnd;
 import org.lightjason.agentspeak.action.bit.matrix.CBoolValue;
@@ -53,12 +49,12 @@ import org.lightjason.agentspeak.action.bit.matrix.CNumericValue;
 import org.lightjason.agentspeak.action.bit.matrix.COr;
 import org.lightjason.agentspeak.action.bit.matrix.CRow;
 import org.lightjason.agentspeak.action.bit.matrix.CRows;
+import org.lightjason.agentspeak.action.bit.matrix.CSet;
 import org.lightjason.agentspeak.action.bit.matrix.CSize;
 import org.lightjason.agentspeak.action.bit.matrix.CToBlas;
 import org.lightjason.agentspeak.action.bit.matrix.CToVector;
 import org.lightjason.agentspeak.action.bit.matrix.CTrueCount;
 import org.lightjason.agentspeak.action.bit.matrix.CXor;
-import org.lightjason.agentspeak.action.bit.matrix.CSet;
 import org.lightjason.agentspeak.error.context.CExecutionIllegealArgumentException;
 import org.lightjason.agentspeak.language.CRawTerm;
 import org.lightjason.agentspeak.language.ITerm;
@@ -66,20 +62,17 @@ import org.lightjason.agentspeak.language.execution.IContext;
 import org.lightjason.agentspeak.language.execution.IExecution;
 import org.lightjason.agentspeak.testing.IBaseTest;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
-
 /**
  * test math bit matrix functions
  */
-@RunWith( DataProviderRunner.class )
 public final class TestCActionMathBitMatrix extends IBaseTest
 {
     /**
@@ -97,8 +90,8 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     /**
      * initialize
      */
-    @Before
-    public void initialize()
+    @BeforeAll
+    public static void initialize()
     {
         MATRIX1.put( 0, 0, true );
         MATRIX1.put( 1, 0, false );
@@ -115,95 +108,56 @@ public final class TestCActionMathBitMatrix extends IBaseTest
      * data provider generator
      * @return data
      */
-    @DataProvider
-    public static Object[] generator()
+    public static Stream<Arguments> generator()
     {
-        return testcase(
+        return Stream.of(
 
-                Stream.of( MATRIX1, MATRIX2 ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CColumns.class, Stream.of( 2D, 2D ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CFalseCount.class, Stream.of( 2D, 1D ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CDimension.class, Stream.of( 2D, 2D, 2D, 2D ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CCopy.class, Stream.of( MATRIX1, MATRIX2 ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CTrueCount.class, Stream.of( 2D, 3D ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CSize.class, Stream.of( 4, 4 ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CRows.class, Stream.of( 2D, 2D ) ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNot.class, Stream.empty() ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), COr.class, Stream.empty() ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CAnd.class, Stream.empty() ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CXor.class, Stream.empty() ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNAnd.class, Stream.empty() ),
+                Arguments.of( Stream.of( MATRIX1, MATRIX2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CHammingDistance.class, Stream.of( 3D ) )
 
-                Stream.of(
-                        CColumns.class,
-                        CFalseCount.class,
-                        CDimension.class,
-                        CCopy.class,
-                        CTrueCount.class,
-                        CSize.class,
-                        CRows.class,
-                        CNot.class,
-                        COr.class,
-                        CAnd.class,
-                        CXor.class,
-                        CNAnd.class,
-                        CHammingDistance.class
-                ),
-                Stream.of( 2D, 2D ),
-                Stream.of( 2D, 1D ),
-                Stream.of( 2D, 2D, 2D, 2D ),
-                Stream.of( MATRIX1, MATRIX2 ),
-                Stream.of( 2D, 3D ),
-                Stream.of( 4, 4 ),
-                Stream.of( 2D, 2D ),
-                Stream.empty(),
-                Stream.empty(),
-                Stream.empty(),
-                Stream.empty(),
-                Stream.empty(),
-                Stream.of( 3D )
-
-        ).toArray();
-    }
-
-
-    /**
-     * method to generate test-cases
-     *
-     * @param p_input input data
-     * @param p_classes matching test-classes / test-cases
-     * @param p_classresult result for each class
-     * @return test-object
-     */
-    @SafeVarargs
-    @SuppressWarnings( "varargs" )
-    private static Stream<Object> testcase( final Stream<Object> p_input, final Stream<Class<?>> p_classes, final Stream<Object>... p_classresult )
-    {
-        final List<ITerm> l_input = p_input.map( CRawTerm::of ).collect( Collectors.toList() );
-
-        return StreamUtils.zip(
-                p_classes,
-                Arrays.stream( p_classresult ),
-            ( i, j ) -> new ImmutableTriple<>( l_input, i, j )
         );
     }
-
 
     /**
      * test all input actions
      *
-     * @param p_input tripel with input, actions classes and results
+     * @param p_input input data
+     * @param p_action action class
+     * @param p_result result
      * @throws IllegalAccessException is thrwon on instantiation error
      * @throws InstantiationException is thrwon on instantiation error
      * @throws NoSuchMethodException is thrwon on instantiation error
      * @throws InvocationTargetException is thrwon on instantiation error
      */
-    @Test
-    @UseDataProvider( "generator" )
-    public void action( final Triple<List<ITerm>, Class<? extends IAction>, Stream<Object>> p_input )
+    @ParameterizedTest
+    @MethodSource( "generator" )
+    public void action( @Nonnull final List<ITerm> p_input, @Nonnull final Class<? extends IAction> p_action, @Nonnull final Stream<Object> p_result )
         throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException
     {
         final List<ITerm> l_return = new ArrayList<>();
 
-        p_input.getMiddle().getConstructor().newInstance().execute(
+        p_action.getConstructor().newInstance().execute(
             false,
             IContext.EMPTYPLAN,
-            p_input.getLeft(),
+            p_input,
             l_return
         );
 
-        Assert.assertArrayEquals(
-                p_input.getMiddle().toGenericString(),
-                p_input.getRight().toArray(),
-                l_return.stream().map( ITerm::raw ).toArray()
+        Assertions.assertArrayEquals(
+                p_result.toArray(),
+                l_return.stream().map( ITerm::raw ).toArray(),
+                p_action.toGenericString()
         );
     }
 
@@ -221,11 +175,11 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( 1, l_return.size() );
-        assertTrue( l_return.get( 0 ).raw() instanceof BitMatrix );
-        Assert.assertEquals( 4, l_return.get( 0 ).<BitMatrix>raw().size() );
-        Assert.assertEquals( 2, l_return.get( 0 ).<BitMatrix>raw().rows() );
-        Assert.assertEquals( 2, l_return.get( 0 ).<BitMatrix>raw().columns() );
+        Assertions.assertEquals( 1, l_return.size() );
+        Assertions.assertTrue( l_return.get( 0 ).raw() instanceof BitMatrix );
+        Assertions.assertEquals( 4, l_return.get( 0 ).<BitMatrix>raw().size() );
+        Assertions.assertEquals( 2, l_return.get( 0 ).<BitMatrix>raw().rows() );
+        Assertions.assertEquals( 2, l_return.get( 0 ).<BitMatrix>raw().columns() );
     }
 
     /**
@@ -242,16 +196,16 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( l_return.size(), 1 );
-        Assert.assertTrue( l_return.get( 0 ).raw() instanceof BitVector );
-        Assert.assertEquals( l_return.get( 0 ).<BitVector>raw().size(), 4 );
+        Assertions.assertEquals( l_return.size(), 1 );
+        Assertions.assertTrue( l_return.get( 0 ).raw() instanceof BitVector );
+        Assertions.assertEquals( l_return.get( 0 ).<BitVector>raw().size(), 4 );
 
         final BitVector l_bitvector = l_return.get( 0 ).raw();
 
-        assertTrue( l_bitvector.get( 0 ) );
-        assertTrue( l_bitvector.get( 1 ) );
-        assertTrue( l_bitvector.get( 2 ) );
-        Assert.assertFalse( l_bitvector.get( 3 ) );
+        Assertions.assertTrue( l_bitvector.get( 0 ) );
+        Assertions.assertTrue( l_bitvector.get( 1 ) );
+        Assertions.assertTrue( l_bitvector.get( 2 ) );
+        Assertions.assertFalse( l_bitvector.get( 3 ) );
     }
 
     /**
@@ -268,14 +222,14 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( l_return.size(), 1 );
-        Assert.assertTrue( l_return.get( 0 ).raw() instanceof BitVector );
-        Assert.assertEquals( l_return.get( 0 ).<BitVector>raw().size(), 2 );
+        Assertions.assertEquals( l_return.size(), 1 );
+        Assertions.assertTrue( l_return.get( 0 ).raw() instanceof BitVector );
+        Assertions.assertEquals( l_return.get( 0 ).<BitVector>raw().size(), 2 );
 
         final BitVector l_bitvector = l_return.get( 0 ).raw();
 
-        assertTrue( l_bitvector.get( 0 ) );
-        assertTrue( l_bitvector.get( 1 ) );
+        Assertions.assertTrue( l_bitvector.get( 0 ) );
+        Assertions.assertTrue( l_bitvector.get( 1 ) );
     }
 
     /**
@@ -292,14 +246,14 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( l_return.size(), 1 );
-        Assert.assertTrue( l_return.get( 0 ).raw() instanceof BitVector );
-        Assert.assertEquals( l_return.get( 0 ).<BitVector>raw().size(), 2 );
+        Assertions.assertEquals( l_return.size(), 1 );
+        Assertions.assertTrue( l_return.get( 0 ).raw() instanceof BitVector );
+        Assertions.assertEquals( l_return.get( 0 ).<BitVector>raw().size(), 2 );
 
         final BitVector l_bitvector = l_return.get( 0 ).raw();
 
-        assertTrue( l_bitvector.get( 0 ) );
-        assertTrue( l_bitvector.get( 1 ) );
+        Assertions.assertTrue( l_bitvector.get( 0 ) );
+        Assertions.assertTrue( l_bitvector.get( 1 ) );
     }
 
     /**
@@ -316,19 +270,22 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( 0D, l_return.get( 0 ).<Number>raw() );
+        Assertions.assertEquals( 0D, l_return.get( 0 ).<Number>raw() );
     }
 
     /**
      * test numeric value error
      */
-    @Test( expected = CExecutionIllegealArgumentException.class )
+    @Test
     public void numericvalueerror()
     {
-        new CNumericValue().execute(
-            false, IContext.EMPTYPLAN,
-            Collections.emptyList(),
-            Collections.emptyList()
+        Assertions.assertThrows(
+            CExecutionIllegealArgumentException.class,
+            () -> new CNumericValue().execute(
+                false, IContext.EMPTYPLAN,
+                Collections.emptyList(),
+                Collections.emptyList()
+            )
         );
     }
 
@@ -346,19 +303,22 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( false, l_return.get( 0 ).<Boolean>raw() );
+        Assertions.assertEquals( false, l_return.get( 0 ).<Boolean>raw() );
     }
 
     /**
      * test boolean value error
      */
-    @Test( expected = CExecutionIllegealArgumentException.class )
+    @Test
     public void boolValueError()
     {
-        new CBoolValue().execute(
-            false, IContext.EMPTYPLAN,
-            Stream.of( MATRIX2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
-            Collections.emptyList()
+        Assertions.assertThrows(
+            CExecutionIllegealArgumentException.class,
+            () -> new CBoolValue().execute(
+                false, IContext.EMPTYPLAN,
+                Stream.of( MATRIX2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+                Collections.emptyList()
+            )
         );
     }
 
@@ -383,12 +343,12 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             l_return
         );
 
-        Assert.assertEquals( 2, l_return.size() );
-        Assert.assertTrue( l_return.get( 0 ).raw() instanceof DoubleMatrix2D );
-        Assert.assertTrue( l_return.get( 1 ).raw() instanceof DoubleMatrix2D );
+        Assertions.assertEquals( 2, l_return.size() );
+        Assertions.assertTrue( l_return.get( 0 ).raw() instanceof DoubleMatrix2D );
+        Assertions.assertTrue( l_return.get( 1 ).raw() instanceof DoubleMatrix2D );
 
-        Assert.assertArrayEquals( new double[][]{{1.0, 0.0}, {0.0, 1.0}}, l_return.get( 0 ).<DoubleMatrix2D>raw().toArray() );
-        Assert.assertArrayEquals( new double[][]{{0.0, 1.0}, {1.0, 1.0}}, l_return.get( 1 ).<DoubleMatrix2D>raw().toArray() );
+        Assertions.assertArrayEquals( new double[][]{{1.0, 0.0}, {0.0, 1.0}}, l_return.get( 0 ).<DoubleMatrix2D>raw().toArray() );
+        Assertions.assertArrayEquals( new double[][]{{0.0, 1.0}, {1.0, 1.0}}, l_return.get( 1 ).<DoubleMatrix2D>raw().toArray() );
     }
 
     /**
@@ -397,7 +357,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     @Test
     public void lambdaassignable()
     {
-        Assert.assertTrue( new CLambdaStreaming().assignable().collect( Collectors.toSet() ).contains( BitMatrix.class ) );
+        Assertions.assertTrue( new CLambdaStreaming().assignable().collect( Collectors.toSet() ).contains( BitMatrix.class ) );
     }
 
     /**
@@ -406,7 +366,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     @Test
     public void lambda()
     {
-        Assert.assertArrayEquals(
+        Assertions.assertArrayEquals(
             Stream.of( 1, 0, 0, 1 ).toArray(),
             new CLambdaStreaming().apply( MATRIX1 ).toArray()
         );
@@ -415,13 +375,16 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     /**
      * test hamming distance
      */
-    @Test( expected = CExecutionIllegealArgumentException.class )
+    @Test
     public void hammingdistanceerror()
     {
-        new CHammingDistance().execute(
-            false, IContext.EMPTYPLAN,
-            Collections.emptyList(),
-            Collections.emptyList()
+        Assertions.assertThrows(
+            CExecutionIllegealArgumentException.class,
+            () -> new CHammingDistance().execute(
+                false, IContext.EMPTYPLAN,
+                Collections.emptyList(),
+                Collections.emptyList()
+            )
         );
     }
 
@@ -439,8 +402,8 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             Collections.emptyList()
         );
 
-        Assert.assertTrue( MATRIX2.get( 0, 0 ) );
-        Assert.assertTrue( MATRIX2.get( 0, 1 ) );
+        Assertions.assertTrue( MATRIX2.get( 0, 0 ) );
+        Assertions.assertTrue( MATRIX2.get( 0, 1 ) );
 
         l_set.execute(
             false, IContext.EMPTYPLAN,
@@ -448,8 +411,8 @@ public final class TestCActionMathBitMatrix extends IBaseTest
             Collections.emptyList()
         );
 
-        Assert.assertFalse( MATRIX2.get( 0, 0 ) );
-        Assert.assertFalse( MATRIX2.get( 0, 1 ) );
+        Assertions.assertFalse( MATRIX2.get( 0, 0 ) );
+        Assertions.assertFalse( MATRIX2.get( 0, 1 ) );
     }
 
 }

@@ -26,15 +26,13 @@ package org.lightjason.agentspeak.action.bit;
 import cern.colt.matrix.tbit.BitVector;
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import com.codepoetics.protonpack.StreamUtils;
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.lightjason.agentspeak.action.IAction;
 import org.lightjason.agentspeak.action.bit.vector.CAnd;
 import org.lightjason.agentspeak.action.bit.vector.CBoolValue;
@@ -62,6 +60,7 @@ import org.lightjason.agentspeak.language.execution.IContext;
 import org.lightjason.agentspeak.language.execution.IExecution;
 import org.lightjason.agentspeak.testing.IBaseTest;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +73,6 @@ import java.util.stream.Stream;
 /**
  * test for bit vector actions
  */
-@RunWith( DataProviderRunner.class )
 public final class TestCActionMathBitVector extends IBaseTest
 {
     /**
@@ -108,7 +106,6 @@ public final class TestCActionMathBitVector extends IBaseTest
      * data provider generator
      * @return data
      */
-    @DataProvider
     public static Object[] generator()
     {
         return testcase(
@@ -172,23 +169,23 @@ public final class TestCActionMathBitVector extends IBaseTest
      * @throws NoSuchMethodException is thrwon on instantiation error
      * @throws InvocationTargetException is thrwon on instantiation error
      */
-    @Test
-    @UseDataProvider( "generator" )
-    public void action( final Triple<List<ITerm>, Class<? extends IAction>, Stream<Object>> p_input )
+    @ParameterizedTest
+    @MethodSource( "generator" )
+    public void action( @Nonnull final List<ITerm> p_input, @Nonnull final Class<? extends IAction> p_action, @Nonnull final  Stream<Object> p_result )
         throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException
     {
         final List<ITerm> l_return = new ArrayList<>();
 
-        p_input.getMiddle().getConstructor().newInstance().execute(
+        p_action.getConstructor().newInstance().execute(
             false, IContext.EMPTYPLAN,
-            p_input.getLeft(),
+            p_input,
             l_return
         );
 
-        Assert.assertArrayEquals(
-                p_input.getMiddle().toGenericString(),
-                p_input.getRight().toArray(),
-                l_return.stream().map( ITerm::raw ).toArray()
+        Assertions.assertArrayEquals(
+                p_result.toArray(),
+                l_return.stream().map( ITerm::raw ).toArray(),
+                p_action.toGenericString()
         );
     }
 
