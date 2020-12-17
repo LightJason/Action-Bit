@@ -281,7 +281,7 @@ public final class TestCActionMathBitMatrix extends IBaseTest
     @Test
     public void row()
     {
-        final BitMatrix l_matrix = initialize( 2, 2, false, true, true, false);
+        final BitMatrix l_matrix = initialize( 2, 2, false, true, true, false );
         final List<ITerm> l_return = new ArrayList<>();
 
         new CRow().execute(
