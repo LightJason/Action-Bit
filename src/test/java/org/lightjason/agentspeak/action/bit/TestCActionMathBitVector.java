@@ -27,8 +27,6 @@ import cern.colt.matrix.tbit.BitVector;
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -62,63 +60,92 @@ import org.lightjason.agentspeak.testing.IBaseTest;
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
 /**
  * test for bit vector actions
  */
-@TestInstance( TestInstance.Lifecycle.PER_CLASS )
 public final class TestCActionMathBitVector extends IBaseTest
 {
     /**
-     * testing vector
-     */
-    private final BitVector m_vector1 = new BitVector( 3 );
-    /**
-     * testing matrix
-     */
-    private final BitVector m_vector2 = new BitVector( 3 );
-
-
-    /**
      * initialize
+     *
+     * @param p_values values
+     * @return bit vector
      */
-    @BeforeEach
-    public void initialize()
+    public static BitVector initialize( @Nonnull boolean... p_values )
     {
-        m_vector1.put( 0, true );
-        m_vector1.put( 1, false );
-        m_vector1.put( 2, false );
-
-        m_vector2.put( 0, false );
-        m_vector2.put( 1, false );
-        m_vector2.put( 2, true );
+        final BitVector l_vector = new BitVector( p_values.length );
+        IntStream.range( 0, p_values.length ).forEach( i -> l_vector.put( i, p_values[i] ) );
+        return l_vector;
     }
 
     /**
      * data provider generator
      * @return data
      */
-    public Stream<Arguments> generator()
+    public static Stream<Arguments> generator()
     {
         return Stream.of(
 
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CFalseCount.class, Stream.of( 2D, 2D ) ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CCopy.class, Stream.of( m_vector1,
-                                                                                                                                            m_vector2
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CFalseCount.class, Stream.of( 2D, 2D ) ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CCopy.class, Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
                 ) ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CTrueCount.class, Stream.of( 1D, 1D ) ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CSize.class, Stream.of( 3, 3 ) ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNot.class, Stream.empty() ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), COr.class, Stream.empty() ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CAnd.class, Stream.empty() ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CNAnd.class, Stream.empty() ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CHammingDistance.class, Stream.of( 2D ) ),
-                Arguments.of( Stream.of( m_vector1, m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ), CXor.class, Stream.empty() )
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CTrueCount.class, Stream.of( 1D, 1D ) ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CSize.class, Stream.of( 3, 3 ) ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CNot.class, Stream.empty() ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), COr.class, Stream.empty() ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CAnd.class, Stream.empty() ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CNAnd.class, Stream.empty() ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CHammingDistance.class, Stream.of( 2D ) ),
+
+                Arguments.of( Stream.of(
+                    initialize( true, false, false ),
+                    initialize( false, false, true )
+                ).map( CRawTerm::of ).collect( Collectors.toList() ), CXor.class, Stream.empty() )
 
         );
     }
@@ -177,15 +204,16 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void boolValue()
     {
+        final BitVector l_vector = initialize( false, false, true );
         final List<ITerm> l_return = new ArrayList<>();
 
         new CBoolValue().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector, 2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
-        Assertions.assertEquals( false, l_return.get( 0 ).<Boolean>raw() );
+        Assertions.assertEquals( true, l_return.get( 0 ).<Boolean>raw() );
     }
 
     /**
@@ -194,25 +222,26 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void set()
     {
+        final BitVector l_vector = initialize( false, false, true );
         final IExecution l_set = new CSet();
 
         l_set.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector2, true, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector, true, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             Collections.emptyList()
         );
 
-        Assertions.assertTrue( m_vector2.get( 0 ) );
-        Assertions.assertTrue( m_vector2.get( 1 ) );
+        Assertions.assertTrue( l_vector.get( 0 ) );
+        Assertions.assertTrue( l_vector.get( 1 ) );
 
         l_set.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector2, 0.5, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector, 0.5, 0, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             Collections.emptyList()
         );
 
-        Assertions.assertFalse( m_vector2.get( 0 ) );
-        Assertions.assertFalse( m_vector2.get( 1 ) );
+        Assertions.assertFalse( l_vector.get( 0 ) );
+        Assertions.assertFalse( l_vector.get( 1 ) );
     }
 
     /**
@@ -221,13 +250,14 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void clear()
     {
+        final BitVector l_vector = initialize( false, false, true );
         new CClear().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector2, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector, 0 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             Collections.emptyList()
         );
 
-        Assertions.assertFalse( m_vector2.get( 0 ) );
+        Assertions.assertFalse( l_vector.get( 0 ) );
     }
 
     /**
@@ -236,16 +266,17 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void range()
     {
+        final BitVector l_vector = initialize( false, false, true );
         final List<ITerm> l_return = new ArrayList<>();
 
         new CRange().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector2, 0, 2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector, 0, 2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
         Assertions.assertEquals( 1, l_return.size() );
-        Assertions.assertEquals( m_vector2, l_return.get( 0 ).<BitVector>raw() );
+        Assertions.assertEquals( l_vector, l_return.get( 0 ).<BitVector>raw() );
     }
 
     /**
@@ -270,11 +301,12 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void numericvalue()
     {
+        final BitVector l_vector = initialize( true, false, false );
         final List<ITerm> l_return = new ArrayList<>();
 
         new CNumericValue().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector1, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector, 1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -303,13 +335,16 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void tolist()
     {
+        final BitVector l_vector = initialize( true, false, false );
         final List<ITerm> l_return = new ArrayList<>();
 
         new CToList().execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector1 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
+
+        System.out.println( Arrays.toString( l_return.get( 0 ).<List<?>>raw().toArray() ) );
 
         Assertions.assertEquals( 1, l_return.size() );
         Assertions.assertTrue( l_return.get( 0 ).raw() instanceof List<?> );
@@ -322,18 +357,20 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void toblas()
     {
+        final BitVector l_vector1 = initialize( true, false, false );
+        final BitVector l_vector2 = initialize( false, false, true );
         final List<ITerm> l_return = new ArrayList<>();
         final IExecution l_toblas = new CToBlas();
 
         l_toblas.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector1, "dense" ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector1, "dense" ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
         l_toblas.execute(
             false, IContext.EMPTYPLAN,
-            Stream.of( m_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
+            Stream.of( l_vector2 ).map( CRawTerm::of ).collect( Collectors.toList() ),
             l_return
         );
 
@@ -360,9 +397,10 @@ public final class TestCActionMathBitVector extends IBaseTest
     @Test
     public void lambda()
     {
+        final BitVector l_vector = initialize( true, false, false );
         Assertions.assertArrayEquals(
             Stream.of( 1, 0, 0 ).toArray(),
-            new CLambdaStreaming().apply( m_vector1 ).toArray()
+            new CLambdaStreaming().apply( l_vector ).toArray()
         );
     }
 
